@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Previsão do Tempo</title>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- css -->
+  <style>
+    body {
+      background-image: url('backgrounds/clear.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      color: #000000; 
+    }
+    .weather-container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.7); /*transparente */
+      border-radius: 10px;
+    }
+    .morning-bg {
+      background-image: url('backgrounds/morning.jpg');
+    }
+    .afternoon-bg {
+      background-image: url('backgrounds/afternoon.jpg');
+    }
+    .evening-bg {
+      background-image: url('backgrounds/evening.jpg');
+    }
+    .night-bg {
+      background-image: url('backgrounds/night.jpg');
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-container">
+    <h1 class="text-center">Previsão do Tempo</h1>
+    <p class="text-center">Cidade: <span id="cityName"></span></p>
+    <p class="text-center">Temperatura: <span id="temperature"></span>°C</p>
+    <p class="text-center">Condição Climática: <span id="weatherCondition"></span></p>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    function getWeather() {
+      const apiKey = '74eb405d';
+      const city = 'Giruá';
+
+      fetch(`https://api.hgbrasil.com/weather?format=json-cors&key=${apiKey}&city_name=${city}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('cityName').textContent = data.results.city;
+          document.getElementById('temperature').textContent = data.results.temp;
+          document.getElementById('weatherCondition').textContent = data.results.description;
+
+          const currentHour = new Date().getHours();
+
+          const description = data.results.description.toLowerCase();
+          if (description.includes('chuva')) {
+            document.body.classList.add('night-bg');
+          } else if (currentHour >= 4 && currentHour < 12) {
+            document.body.classList.add('morning-bg');
+          } else if (currentHour >= 12 && currentHour < 18) {
+            document.body.classList.add('afternoon-bg');
+          } else if (currentHour >= 18 && currentHour < 24) {
+            document.body.classList.add('evening-bg');
+          } else {
+            document.body.classList.add('night-bg');
+          }
+        })
+        .catch(error => {
+          console.error('Não foi possível encontrar dados atuais.', error);
+        });
+    }
+
+    getWeather();
+  </script>
+</body>
+</html>
